@@ -1,0 +1,73 @@
+<odoo>
+    <!-- Root menu -->
+    <menuitem 
+        id="menu_estate_root" 
+        name="Estate" 
+    />
+
+    <!-- First level Advertisement -->
+    <menuitem 
+        id="menu_advertisement" 
+        name="Advertisement" 
+        parent="menu_estate_root" 
+    />
+
+    <!-- Second level under Advertisement -->
+    <menuitem 
+        id="menu_estate_property" 
+        name="Properties"
+        parent="menu_advertisement"
+        action="action_estate_property" 
+    />
+
+    <!-- Menu action properties view  -->
+    <record id="action_estate_property" model="ir.actions.act_window">
+        <field name="name">Estate Properties</field>
+        <field name="res_model">estate.property</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first property
+            </p>
+        </field>
+    </record>
+
+    <!-- First level Settings -->
+    <menuitem 
+        id="menu_settings" 
+        name="Settings" 
+        parent="menu_estate_root" 
+    />
+
+    
+    <!-- Second level under settings property types -->
+    <menuitem 
+        id="menu_property_type" 
+        name="Property Types"
+        parent="menu_settings"
+        action="action_property_type" 
+    />
+
+    <!-- Menu action property types view -->
+    <record id="action_property_type" model="ir.actions.act_window">
+        <field name="name">Property Types</field>
+        <field name="res_model">estate.property.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu action property tags view -->
+    <record id="action_property_tag" model="ir.actions.act_window">
+        <field name="name">Property Tags</field>
+        <field name="res_model">estate.property.tag</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Second level under settings property tags -->
+    <menuitem 
+        id="menu_property_tag" 
+        name="Property Tags"
+        parent="menu_settings"
+        action="action_property_tag"
+    />
+     
+</odoo>

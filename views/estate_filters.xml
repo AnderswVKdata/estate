@@ -1,0 +1,30 @@
+<odoo>
+  <record id="view_estate_property_search" model="ir.ui.view">
+    <field name="name">estate.property.search</field>
+    <field name="model">estate.property</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <group string="State">
+          <filter name="filter_available" string="Available" domain="[('is_sold','=', False), ('is_cancelled','=',False)]"/>
+          <filter name="filter_new" string="New" domain="[('state','=','new')]"/>
+          <filter name="filter_offer" string="Offer Received" domain="[('state','=','offer_received')]"/>
+          <filter name="filter_sold" string="Sold" domain="[('state','=','sold')]"/>
+
+        </group>
+            <separator string="expected_price"/>
+                <field name="expected_price"/>
+                <filter name="filter_price_min_100k" string="Min. Price: 100,000" domain="[('expected_price', '>=', 100000)]"/>
+                <filter name="filter_price_min_300k" string="Min. Price: 300,000" domain="[('expected_price', '>=', 300000)]"/>
+            <separator string="living_area"/>
+                <field name="living_area"/>
+                <filter name="filter_area_min_50" string="Min. Area: 50m²" domain="[('living_area', '>=', 50)]"/>
+                <filter name="filter_area_min_100" string="Min. Area: 100m²" domain="[('living_area', '>=', 100)]"/>
+            <separator string="bedrooms"/>
+                <field name="bedrooms"/>
+                <filter name="filter_bed_1" string="1 Bedroom" domain="[('bedrooms', '=', 1)]"/>
+                <filter name="filter_bed_2plus" string="2+ Bedrooms" domain="[('bedrooms', '>=', 2)]"/>        
+      </search>
+    </field>
+  </record>
+</odoo>
