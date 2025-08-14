@@ -8,20 +8,20 @@ class EstatePropertyOffer(models.Model):
     _name="estate.property.offer"
     _description="property offer"
 
-    
+    offer_validity = fields.Integer(default=7)
+    price = fields.Float()
+
+    deadline = fields.Date(
+        string="Deadline",
+        compute="_compute_deadline",
+        store=True,
+        readonl=True,
+    )
+
     partner_id = fields.Many2one( 
         "res.partner",
         string="partner",
         required=True
-    )
-
-    offer_status = fields.Selection(
-        selection=[
-            ('accepted', 'Accepted'),
-            ('refused', 'Refused')
-        ],
-        string="Offer Status",
-        copy=False
     )
 
     property_id = fields.Many2one(
@@ -36,29 +36,37 @@ class EstatePropertyOffer(models.Model):
         string="Property Type"
     )
 
-    price = fields.Float()
+    offer_status = fields.Selection(
+        selection=[
+            ('accepted', 'Accepted'),
+            ('refused', 'Refused')
+        ],
+        string="Offer Status",
+        copy=False
+    )
+    
     @api.constrains("price")
     def _price_validator(self):
          for record in self:
             expected_price = record.property_id.expected_price
             min_price = expected_price *0.9
             if float_compare(record.price, min_price, precision_digits=2) < 0:
-                 raise ValidationError("offer must be within 90 percent of expected price")
+                 raise ValidationError("offer must be within 90 percent of expected price")       
 
-
-    offer_validity = fields.Integer(default=7)
-    deadline = fields.Date(
-        string="Deadline",
-        compute="_compute_deadline",
-        store=True,
-        readonl=True,
-    )
-
-    @api.depends("offer_validity")
-    def _compute_deadline(self):
-        for record in self:
-                record.deadline = date.today() + timedelta(days=record.offer_validity)
-
+    @api.model
+    def create(self, vals):
+        property_id = vals.get("property_id")
+        offer_price = vals.get("price", 0)  
+        if property_id:
+            property = self.env["estate.property"].browse(property_id)
+            if property.property_offer_id:
+                max_offer = max(property.property_offer_id.mapped("price"))
+                if offer_price < max_offer:
+                    raise ValidationError("Cannot create an offer lower than an existing offer.")
+            property.state = "offer_received"
+        record = super().create(vals)
+        return record
+    
     def accept_offer(self):
          for record in self:
               record.offer_status = "accepted"
@@ -72,21 +80,8 @@ class EstatePropertyOffer(models.Model):
               record.property_id.selling_price = 0
               record.property_id.state = "new"
 
-    @api.model
-    def create(self, vals):
-        property_id = vals.get("property_id")
-        offer_price = vals.get("price", 0)  
-
-        if property_id:
-            property = self.env["estate.property"].browse(property_id)
-
-            if property.property_offer_id:
-                max_offer = max(property.property_offer_id.mapped("price"))
-                if offer_price < max_offer:
-                    raise ValidationError("Cannot create an offer lower than an existing offer.")
-
-            property.state = "offer_received"
-
-        record = super().create(vals)
-        return record
+    @api.depends("offer_validity")
+    def _compute_deadline(self):
+        for record in self:
+                record.deadline = date.today() + timedelta(days=record.offer_validity)
 

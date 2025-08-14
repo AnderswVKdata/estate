@@ -5,6 +5,10 @@ class EstatePropertyType(models.Model):
     _description = "Property Type"
 
     name = fields.Char(required=True)
+    offer_count = fields.Integer(
+        string="Offer Count",
+        compute='_compute_offer_count'
+    )
 
     property_ids = fields.One2many(
         "estate.property",
@@ -16,12 +20,7 @@ class EstatePropertyType(models.Model):
         'estate.property.offer',
         'property_type_id',
         string="Offers"
-    )
-
-    offer_count = fields.Integer(
-        string="Offer Count",
-        compute='_compute_offer_count'
-    )
+    )   
 
     @api.depends('offer_ids')
     def _compute_offer_count(self):
