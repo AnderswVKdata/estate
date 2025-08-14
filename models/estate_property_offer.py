@@ -59,8 +59,8 @@ class EstatePropertyOffer(models.Model):
         offer_price = vals.get("price", 0)  
         if property_id:
             property = self.env["estate.property"].browse(property_id)
-            if property.property_offer_id:
-                max_offer = max(property.property_offer_id.mapped("price"))
+            if property.property_offer_ids:
+                max_offer = max(property.property_offer_ids.mapped("price"))
                 if offer_price < max_offer:
                     raise ValidationError("Cannot create an offer lower than an existing offer.")
             property.state = "offer_received"

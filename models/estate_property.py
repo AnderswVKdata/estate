@@ -63,7 +63,7 @@ class EstateProperty(models.Model):
         "estate.property.tag",
           string="Property Tag"
     )
-    property_offer_id = fields.One2many(
+    property_offer_ids = fields.One2many(
         "estate.property.offer",
         "property_id",
         string="Offers"
@@ -111,10 +111,10 @@ class EstateProperty(models.Model):
         for record in self:
             record.total_area = record.living_area + record.garden_area
     
-    @api.depends("property_offer_id.price")
+    @api.depends("property_offer_ids.price")
     def _compute_best_offer(self):
         for property in self:
-            prices = property.property_offer_id.mapped("price")
+            prices = property.property_offer_ids.mapped("price")
             property.best_offer = max(prices) if prices else 0.0   
     
     @api.ondelete(at_uninstall=False)

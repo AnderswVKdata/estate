@@ -129,7 +129,7 @@
                             </group>
                         </page>
                         <page string="Offers">
-                            <field name="property_offer_id" mode="form,list" widget="one2many_list">
+                            <field name="property_offer_ids" mode="form,list" widget="one2many_list">
                                 <list decoration-success="offer_status == 'accepted'" decoration-danger="offer_status == 'refused'">
                                     <field name="price"/>
                                     <field name="partner_id"/>
