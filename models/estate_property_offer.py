@@ -15,7 +15,7 @@ class EstatePropertyOffer(models.Model):
         string="Deadline",
         compute="_compute_deadline",
         store=True,
-        readonl=True,
+        readonly=True,
     )
 
     partner_id = fields.Many2one( 
@@ -53,19 +53,22 @@ class EstatePropertyOffer(models.Model):
             if float_compare(record.price, min_price, precision_digits=2) < 0:
                  raise ValidationError("offer must be within 90 percent of expected price")       
 
-    @api.model
-    def create(self, vals):
-        property_id = vals.get("property_id")
-        offer_price = vals.get("price", 0)  
-        if property_id:
-            property = self.env["estate.property"].browse(property_id)
-            if property.property_offer_ids:
-                max_offer = max(property.property_offer_ids.mapped("price"))
-                if offer_price < max_offer:
-                    raise ValidationError("Cannot create an offer lower than an existing offer.")
-            property.state = "offer_received"
-        record = super().create(vals)
-        return record
+    @api.model_create_multi
+    def create(self, vals_list):
+        # vals_list is a list of dicts, each dict is a record's values
+        for vals in vals_list:
+            property_id = vals.get("property_id")
+            offer_price = vals.get("price", 0)
+            if property_id:
+                property = self.env["estate.property"].browse(property_id)
+                if property.property_offer_ids:
+                    max_offer = max(property.property_offer_ids.mapped("price"))
+                    if offer_price < max_offer:
+                        raise ValidationError("Cannot create an offer lower than an existing offer.")
+                property.state = "offer_received"
+        
+        records = super().create(vals_list)
+        return records
     
     def accept_offer(self):
          for record in self:
