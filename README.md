@@ -1,1 +1,5 @@
-totally cool estate
+Estate is a backend Odoo module built as a tutorial for learning how to develop custom applications within the Odoo framework. It simulates the backend for a real estate brokerage system, where properties can be listed for sale, offers can be tracked, and sales workflows can be managed.
+
+The module allows users to create and manage real estate properties, including details like expected price, selling price, availability, and garden information. Users can add and manage offers for each property, accept or refuse them, and automatically update the property's selling price and status. The system enforces business logic such as requiring that the selling price is not lower than 90% of the expected price, and prevents deletion of sold or active properties.
+
+It includes proper access control, computed fields, validations, and user-friendly views (form, list, kanban), and demonstrates core concepts like model relationships, business rules, and custom server-side logic. This module serves as a complete and practical example for learning backend development in Odoo.
